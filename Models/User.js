@@ -2,6 +2,7 @@
 const mongoose = require("mongoose");
 const bcrypt=require("bcrypt")
 const validator=require("validator")
+
 const Schema=mongoose.Schema
 const userSchema = new Schema({
     name:{
@@ -18,14 +19,16 @@ const userSchema = new Schema({
         type: String,
         required: true, 
     },
- role:{
-    type:String,
- }
+    role: {
+        type: String,
+        enum: ['user', 'admin',"tiak-tiak"], // Define possible roles
+        default: 'user', // Set a default role
+    },
 })
 //method to compare the hashed password with inputted one
 userSchema.statics.signup=async function(email,password,name,role){
     //validation
-    if(!email||!password||!name||!role){
+    if(!email||!password||!name){
         throw Error('all fields are required')
     }
     if(!validator.isEmail(email)){
@@ -40,15 +43,16 @@ userSchema.statics.signup=async function(email,password,name,role){
    }
    const salt =await bcrypt.genSalt(10)
    const hash=await bcrypt.hash(password,salt)
-   const user=await this.create({email,password:hash,name,role})
+   const user=await this.create({email,password:hash,name,role:role||"user"})
    return user
 };
 //method for login
-userSchema.statics.login=async function (email,password){
+userSchema.statics.login=async function (email,password,name){
     if(!email||!password){
         throw Error('all fields are required')
     }
-    const user= await this.findOne({email})
+    const user= await this.findOne({email}) || await this.findOne({name})
+    console.log("bonhfsdg",user);
     if (!user){
         throw Error('User not found');
         };
