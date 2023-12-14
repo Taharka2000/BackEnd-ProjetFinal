@@ -21,9 +21,15 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        enum: ['user', 'admin',"tiak-tiak"], // Define possible roles
+        enum: ['user', 'tiak-tiak'], // Define possible roles
         default: 'user', // Set a default role
     },
+    currentPassword:{
+        type:String,
+    },
+    newPassword:{
+        type:String,
+    }
 })
 //method to compare the hashed password with inputted one
 userSchema.statics.signup=async function(email,password,name,role){
@@ -47,11 +53,11 @@ userSchema.statics.signup=async function(email,password,name,role){
    return user
 };
 //method for login
-userSchema.statics.login=async function (email,password,name){
+userSchema.statics.login=async function (email,password){
     if(!email||!password){
         throw Error('all fields are required')
     }
-    const user= await this.findOne({email}) || await this.findOne({name})
+    const user= await this.findOne({email})
     console.log("bonhfsdg",user);
     if (!user){
         throw Error('User not found');

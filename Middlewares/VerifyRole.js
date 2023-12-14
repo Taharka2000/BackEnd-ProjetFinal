@@ -1,11 +1,24 @@
-// Middleware function to verify if the user has the 'admin' role
-exports.isAdmin = (req, res, next) => {
+// Middleware function to check if the user has the 'admin' role
+module.exports.isAdmin = (req, res, next) => {
     // Check if user data is available in the request object
-    if (req.user && req.user.role === 'admin') {
-        // If the user has the 'admin' role, proceed to the next middleware or route handler
-        return next();
+    const user = req.user;
+
+    // Check if user and role are defined
+    if (user && user.role) {
+        const role = user.role;
+        if (!role === 'tiak-tiak') {
+            res.status(403).json({ message: 'Access denied' });
+        } else {
+            res.json({ message: 'Access granted to admin' });
+            // Move next() inside the if-else block to ensure it's only called when needed
+            next();
+        }
     } else {
-        // If the user does not have the 'admin' role, return a 403 Forbidden status
-        return res.status(403).json({ message: 'Permission denied' });
+        res.status(403).json({ message: 'Access ded' });
+        // Move next() inside the if-else block to ensure it's only called when needed
+        next();
     }
-}
+};
+
+
+

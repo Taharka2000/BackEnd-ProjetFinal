@@ -1,82 +1,45 @@
 const jwt = require('jsonwebtoken');
 
-// Middleware function to verify JWT and user role
 module.exports.verifyTokenAndRole = (req, res, next) => {
-  // Extract the token from the 'Authorization' header
-  const token = req.headers.authorization;
+  // Si c'est une requête OPTIONS, simplement passer au middleware suivant
+  if (req.method === 'OPTIONS') {
+    return next();
+  }
 
-  // Check if the token is missing
-  if (!token) {
-    return res.status(401).json({ message: 'Invalid token format' });
+  // Extraction du token de l'en-tête 'Authorization'
+  const token = req.headers.authorization;
+  console.log('Token reçu côté serveur :', token);
+
+  // Vérification si le token est manquant
+  if (!token || !token.startsWith('Bearer ')) {
+    console.error('Format de token invalide ou token manquant');
+    return res.status(401).json({ message: 'Format de token invalide' });
   }
 
   try {
-    // Verify the token using the provided secret key
+    // Vérification du token en utilisant une clé secrète
     const decodedToken = jwt.verify(token.split(" ")[1], 'sammba yero taharka sow');
 
-    // Log the decoded token for debugging purposes
-    console.log('Decoded Token:', decodedToken);
-
-    // Check if the decoded token or user data is missing
+    // Vérification si les données utilisateur sont présentes
     if (!decodedToken || !decodedToken.data) {
-      return res.status(401).json({ message: 'Invalid token. Missing user data.' });
+      return res.status(401).json({ message: 'Token invalide. Données utilisateur manquantes.' });
     }
 
-    // Attach the user data to the request object for further middleware or route handling
+    // Attachement des données utilisateur à l'objet de requête
     req.user = decodedToken.data;
 
-    // Check if the user has the 'admin' role
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'You are not authorized on this request' });
+    // Vérification si l'utilisateur a le rôle 'tiak-tiak'
+    if (req.user.role !== 'tiak-tiak') {
+      return res.status(403).json({ message: 'Vous n\'êtes pas autorisé sur cette requête' });
     }
 
-    // Continue to the next middleware or route handler if everything is valid
+    // Continuer vers le prochain middleware ou gestionnaire de route si tout est valide
     next();
   } catch (error) {
-    // Log JWT verification errors
-    console.error('JWT Verification Error:', error);
+    // Journalisation des erreurs de vérification JWT
+    console.error('Erreur de vérification JWT :', error);
 
-    // Return a 401 status if the token is invalid
-    return res.status(401).json({ message: 'Invalid token' });
+    // Retourner un statut 401 si le token est invalide
+    return res.status(401).json({ message: 'Token invalide' });
   }
 };
-module.exports.verifyTokenAndRole = (req, res, next) => {
-  // Extract the token from the 'Authorization' header
-  const token = req.headers.authorization;
-
-  // Check if the token is missing
-  if (!token) {
-    return res.status(401).json({ message: 'Invalid token format' });
-  }
-
-  try {
-    // Verify the token using the provided secret key
-    const decodedToken = jwt.verify(token.split(" ")[1], 'sammba yero taharka sow');
-
-    // Log the decoded token for debugging purposes
-    console.log('Decoded Token:', decodedToken);
-
-    // Check if the decoded token or user data is missing
-    if (!decodedToken || !decodedToken.data) {
-      return res.status(401).json({ message: 'Invalid token. Missing user data.' });
-    }
-
-    // Attach the user data to the request object for further middleware or route handling
-    req.user = decodedToken.data;
-
-    // Check if the user has the 'admin' role
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'You are not authorized on this request' });
-    }
-
-    // Continue to the next middleware or route handler if everything is valid
-    next();
-  } catch (error) {
-    // Log JWT verification errors
-    console.error('JWT Verification Error:', error);
-
-    // Return a 401 status if the token is invalid
-    return res.status(401).json({ message: 'Invalid token' });
-  }
-};
-
