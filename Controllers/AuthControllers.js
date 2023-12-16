@@ -10,8 +10,8 @@ const createToken1 = (id, role) => {
 };
 //creation de compte
 module.exports.signupUser = async (req, res, next) => {
+  const { email, password, name, role } = req.body;
   try {
-    const { email, password, name, role } = req.body;
     const user = await User.signup(email, password, name, role);
     const token = createToken1(user._id);
     res.status(200).json({ email, token });
@@ -21,8 +21,8 @@ module.exports.signupUser = async (req, res, next) => {
 };
 
 module.exports.loginUser = async (req, res) => {
+  const { email, password, role, name } = req.body;
   try {
-    const { email, password, role, name } = req.body;
     const user = await User.login(email, password, name);
     const token = createToken1(user._id, user.role);
     res.status(200).json({ email, token, role:user.role, name: user.name });
