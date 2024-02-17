@@ -1,20 +1,22 @@
-//creation d'un model user  avec mongoose
 const mongoose = require("mongoose");
-const Schema=mongoose.Schema
-const useModel = new Schema({
-    name:{
-        type:String,
-        
-    },
-    email: {
+const Schema = mongoose.Schema;
+
+const userModel = new Schema({
+    DateDepart: {
         type: String,
-       
     },
-    date:{
-        type : String ,
+    DateArrive: {
+        type: String,
     },
-    heure:{
-        type : String
+    LieuDepart: {
+        type: String,
+    },
+    LieuArrive: {
+        type: String,
+    },
+    heure: {
+        type: String
     }
-})
-module.exports = mongoose.model("Model", useModel)
+});
+
+module.exports = mongoose.model("Model", userModel);

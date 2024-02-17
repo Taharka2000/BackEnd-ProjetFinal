@@ -9,7 +9,7 @@ router.post("/signup",signupUser)
 router.post("/login",loginUser)
 router.post("/verification",createAccount)
 router.post("/reset",changePassword)
-router.post("/ajout", verifyTokenAndRole, ajout);
+router.post("/ajout",verifyTokenAndRole, ajout);
 router.get("/trouver/:id",foundId)
 router.get("/take",trouver)
 router.put("/update/:id",update)
